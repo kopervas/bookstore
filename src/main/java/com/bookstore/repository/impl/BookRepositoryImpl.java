@@ -1,6 +1,7 @@
 package com.bookstore.repository.impl;
 
 import com.bookstore.exception.DataProcessingException;
+import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.model.Book;
 import com.bookstore.repository.BookRepository;
 import jakarta.persistence.EntityManager;
@@ -18,18 +19,21 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book save(Book book) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = null;
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
             transaction = entityManager.getTransaction();
             transaction.begin();
             entityManager.persist(book);
             transaction.commit();
             return book;
         } catch (Exception e) {
-            if (transaction != null) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can`t insert book into DB: " + book);
+            throw new DataProcessingException("Can't save book", e);
+        } finally {
+            entityManager.close();
         }
     }
 
@@ -37,6 +41,8 @@ public class BookRepositoryImpl implements BookRepository {
     public List<Book> findAll() {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             return entityManager.createQuery("SELECT u FROM Book u", Book.class).getResultList();
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can't find any books");
         }
     }
 
@@ -45,6 +51,8 @@ public class BookRepositoryImpl implements BookRepository {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             Book book = entityManager.find(Book.class, id);
             return Optional.ofNullable(book);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can`t find book by id " + id);
         }
     }
 
