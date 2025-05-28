@@ -42,7 +42,7 @@ public class BookRepositoryImpl implements BookRepository {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             return entityManager.createQuery("SELECT u FROM Book u", Book.class).getResultList();
         } catch (Exception e) {
-            throw new EntityNotFoundException("Can't find any books");
+            throw new DataProcessingException("Can't find any books");
         }
     }
 
@@ -53,17 +53,6 @@ public class BookRepositoryImpl implements BookRepository {
             return Optional.ofNullable(book);
         } catch (Exception e) {
             throw new EntityNotFoundException("Can`t find book by id " + id);
-        }
-    }
-
-    @Override
-    public List<Book> findAllByName(String name) {
-        String lowerCaseName = name.toLowerCase();
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager
-                    .createQuery("SELECT b FROM Book b WHERE lower(b.title) LIKE :name", Book.class)
-                    .setParameter("name", "%" + lowerCaseName + "%")
-                    .getResultList();
         }
     }
 }
