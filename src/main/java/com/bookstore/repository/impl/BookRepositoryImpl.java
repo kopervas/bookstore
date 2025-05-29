@@ -1,7 +1,6 @@
 package com.bookstore.repository.impl;
 
 import com.bookstore.exception.DataProcessingException;
-import com.bookstore.exception.EntityNotFoundException;
 import com.bookstore.model.Book;
 import com.bookstore.repository.BookRepository;
 import jakarta.persistence.EntityManager;
@@ -52,7 +51,7 @@ public class BookRepositoryImpl implements BookRepository {
             Book book = entityManager.find(Book.class, id);
             return Optional.ofNullable(book);
         } catch (Exception e) {
-            throw new EntityNotFoundException("Can`t find book by id " + id);
+            throw new DataProcessingException("Can`t find book by id " + id, e);
         }
     }
 }
