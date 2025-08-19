@@ -7,9 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+@Data
 @Entity
 @Getter
 @Setter
@@ -30,4 +32,6 @@ public class Book {
     private String description;
     @Column
     private String coverImage;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }

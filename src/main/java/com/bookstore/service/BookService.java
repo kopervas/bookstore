@@ -2,6 +2,7 @@ package com.bookstore.service;
 
 import com.bookstore.dto.BookDto;
 import com.bookstore.dto.CreateBookRequestDto;
+import com.bookstore.dto.UpdateBookRequestDto;
 import java.util.List;
 
 public interface BookService {
@@ -10,4 +11,6 @@ public interface BookService {
     List<BookDto> findAll();
 
     BookDto findById(Long id);
+
+    BookDto update(Long id, UpdateBookRequestDto requestDto);
 }
